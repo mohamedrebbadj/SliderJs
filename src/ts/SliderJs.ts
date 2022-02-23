@@ -29,7 +29,7 @@ const sliderDefaults: Obj = {
 class Slider {
   [index: string]: any;
   constructor(
-    public input: HTMLElement,
+    public input: HTMLInputElement,
     private options: Obj,
     private accessabilityAttrs = ['tabindex']
   ) {
@@ -80,8 +80,10 @@ class Slider {
     const inputOptions = ['step', 'min', 'max', 'value'];
     for (const option in this.options) {
       this.sliderElement.setAttribute(`data-${option}`, `${this[option]}`);
-      if (inputOptions.includes(option))
+      if (inputOptions.includes(option)) {
         this.input.setAttribute(`${option}`, `${this[option]}`);
+        if (option === "value") this.input.value = this[option];
+      }
     }
   }
   // Determine the right side to display tooltip
@@ -133,5 +135,5 @@ class Slider {
 }
 const sliderInput = document.querySelector(
   "input[type='range']"
-) as HTMLElement;
+) as HTMLInputElement;
 let slider = new Slider(sliderInput, { min: 30, value: 40, max: 50 });
