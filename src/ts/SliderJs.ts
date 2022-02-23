@@ -28,11 +28,13 @@ const sliderDefaults: Obj = {
 // ** Slider Class
 class Slider {
   [index: string]: any;
-  constructor(
-    public input: HTMLInputElement,
-    private options: Obj,
-    private accessabilityAttrs = ['tabindex']
-  ) {
+  constructor(public input: HTMLInputElement, private options: Obj) {
+    this.accessibilityAttrs = [
+      {
+        name: 'tabIndex',
+        value: '1'
+      }
+    ];
     this.initOptions();
     this.makeSlider();
     this.setOptionsOnSlider();
@@ -108,6 +110,10 @@ class Slider {
     // Create Slider
     this.sliderElement = createElement('div', {
       className: `sj sj-${this.orientation}`
+    });
+    // Add accessibility attributes to slider element
+    this.accessibilityAttrs.forEach((attr: {name: string, value: string}) => {
+      this.sliderElement.setAttribute(attr.name, attr.value);
     });
     // Append slider first to use its coordinates to position tooltip
     document.body.append(this.sliderContainer);
