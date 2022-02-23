@@ -82,7 +82,7 @@ class Slider {
       this.sliderElement.setAttribute(`data-${option}`, `${this[option]}`);
       if (inputOptions.includes(option)) {
         this.input.setAttribute(`${option}`, `${this[option]}`);
-        if (option === "value") this.input.value = this[option];
+        if (option === 'value') this.input.value = this[option];
       }
     }
   }
@@ -120,10 +120,13 @@ class Slider {
       className: `sj-tooltip`,
       html: `${this.value}`
     });
-    this.track.append(
+    // Create slider progress and append thumb and tooltip to it
+    this.progress = createElement('div', { className: `sj-progress` });
+    this.progress.append(
       this.tooltip,
       createElement('div', { className: 'sj-thumb' })
     );
+    this.track.append(this.progress);
     this.tooltip.classList.add(`sj-tooltip-${this.posTooltip()}`);
     // Create and append min, slider track and max elements to slider
     this.sliderElement.append(
