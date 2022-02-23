@@ -35,7 +35,7 @@ class Slider {
   ) {
     this.initOptions();
     this.makeSlider();
-    this.setOptionsOnSliderElement();
+    this.setOptionsOnSlider();
   }
   // Set each option to its appropriate value
   setOption(optionName: string): SN {
@@ -69,11 +69,19 @@ class Slider {
     options.forEach((option) => {
       this.options[option] = this.setOption(option);
     });
+    // Remove all attributes from the input and preserve type attribute
+    initials
+      .concat(options)
+      .forEach((option) => this.input.removeAttribute(option));
+    this.input.setAttribute('type', 'range');
   }
-  // Set options on slider element to make debugging easier
-  setOptionsOnSliderElement() {
+  // Set options on slider and input to make debugging easier
+  setOptionsOnSlider() {
+    const inputOptions = ['step', 'min', 'max', 'value'];
     for (const option in this.options) {
       this.sliderElement.setAttribute(`data-${option}`, `${this[option]}`);
+      if (inputOptions.includes(option))
+        this.input.setAttribute(`${option}`, `${this[option]}`);
     }
   }
   // Determine the right side to display tooltip
