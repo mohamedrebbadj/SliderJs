@@ -10,7 +10,7 @@ function getPrecision(num: unknown): number {
     `Expected an argument of type number but type ${typeof num} was found instead`
   );
 }
-// Create and return element with the provided classname and html
+// Create and return element with the provided className and html
 function createElement(tag: string, { className = '', html = '' } = {}) {
   const elem = document.createElement(tag);
   elem.className = className;
@@ -73,10 +73,7 @@ class Slider {
   // Set options on slider element to make debugging easier
   setOptionsOnSliderElement() {
     for (const option in this.options) {
-      this.sliderElement.setAttribute(
-        `data-${option}`,
-        `${this.options[option]}`
-      );
+      this.sliderElement.setAttribute(`data-${option}`, `${this[option]}`);
     }
   }
   // Determine the right side to display tooltip
