@@ -1,0 +1,253 @@
+@use 'sass:math';
+// ! Documentation:
+// ? Start with the name of the element and then the type of info the variable holds: thumb[-color]
+// ? The name of the pseudo-elements in the variables must be preceded by an underscore as follows: thumb[_after]-color.
+
+// Colors
+$tooltip-color: #3a0ca3;
+$tooltip-text-color: #ffffff;
+$track-color: #e4e4e4;
+$thumb-color: #f72585;
+$progress-color: $thumb-color;
+// Dimensions
+$track-height: 5px;
+$track-width: 300px;
+$track-horizontal-spacing: 20px;
+$thumb-radius: 20px;
+$tooltip-height: 30px;
+$tooltip-width: 90px;
+$progress-height: $track-height;
+$progress-width: 50%;
+$tooltip-caret-side: 15px;
+// Orientation
+$directions: 'right', 'left', 'top', 'bottom';
+$axes: 'vertical', 'horizontal';
+// Calculations
+$thumb_after-radius: math.div($thumb-radius * 60, 100);
+// @Mixins
+// =============================================>
+//** @center (flex-type: flex | inline-flex, axis: both | main | cross, flex-dir: flex-direction values)
+// ? Center elements inside a container using flexbox
+@mixin center($flex-type: flex, $axis: 'both', $flex-dir: row) {
+  display: $flex-type;
+  flex-direction: $flex-dir;
+  @if ($axis == 'both') {
+    justify-content: center;
+    align-items: center;
+  } @else if ($axis == 'cross') {
+    align-items: center;
+  } @else if ($axis == 'main') {
+    justify-content: center;
+  }
+}
+// ===============================================>
+// ===============================================>
+//** @caret (direction: left | right | top | bottom)
+// ? Lay out tooltip caret style based on direction argument ,direction to opposite direction [top means from top to bottom]
+@mixin caret($direction: 'left') {
+  &::before {
+    @if ($direction == 'top') {
+      left: auto;
+      top: $tooltip-height - math.div($tooltip-caret-side, 2);
+    } @else if ($direction == 'bottom') {
+      left: auto;
+      top: math.div($tooltip-caret-side, 2) * -1;
+    } @else if ($direction == 'left') {
+      top: auto;
+      left: $tooltip-width - math.div($tooltip-caret-side, 2);
+    } @else if ($direction == 'right') {
+      top: auto;
+      left: math.div($tooltip-caret-side, 2) * -1;
+    }
+  }
+}
+// ===============================================>
+// ===============================================>
+// ** tooltip(direction: left | right | bottom | top)
+// ? Lay out tooltip styles based on its direction
+@mixin tooltip($direction: 'left') {
+  @if ($direction == 'left' or $direction == 'right') {
+    top: 100%;
+    transform: translateY(-50%);
+    @if ($direction == 'left') {
+      left: -$tooltip-caret-side -
+        $tooltip-width -
+        math.div($tooltip-caret-side, 2);
+    } @else {
+      left: $progress-height +
+        $tooltip-caret-side +
+        math.div($tooltip-caret-side, 2);
+    }
+  } @else if ($direction == 'top' or $direction == 'bottom') {
+    left: 100%;
+    transform: translateX(-50%);
+    @if ($direction == 'top') {
+      top: -$tooltip-height -
+        $tooltip-caret-side -
+        math.div($tooltip-caret-side, 2);
+    } @else {
+      top: $progress-height +
+        $tooltip-caret-side +
+        math.div($tooltip-caret-side, 2);
+    }
+  }
+}
+// ===============================================>
+// ===============================================>
+//** thumb(axe: vertical | horizontal)
+// ? Lay out thumb based on slider axe
+@mixin thumb($axe: 'vertical') {
+  @if ($axe == 'vertical') {
+    bottom: 0;
+    left: 50%;
+    transform: translate(-50%, 50%);
+    top: auto;
+    right: auto;
+  } @else if ($axe == 'horizontal') {
+    right: 0;
+    top: 50%;
+    transform: translate(50%, -50%);
+  }
+}
+// ===============================================>
+// ===============================================>
+//** progress(axe: vertical | horizontal)
+// ? Lay out progress based on slider axe
+@mixin progress($axe: 'vertical') {
+  @if ($axe == 'horizontal') {
+    top: 50%;
+    left: 0;
+    width: $progress-width;
+    transform: translateY(-50%);
+    height: $progress-height;
+  } @else if ($axe == 'vertical') {
+    top: 0;
+    left: 50%;
+    width: $progress-height;
+    transform: translateX(-50%);
+    height: $progress-width;
+  }
+}
+// ===============================================>
+// ===============================================>
+//** track(axe: vertical | horizontal)
+// ? Lay out track based on slider axe
+@mixin track($axe: 'vertical') {
+  @if ($axe == 'horizontal') {
+    margin: {
+      left: $track-horizontal-spacing;
+      right: $track-horizontal-spacing;
+    }
+    height: $track-height;
+    width: $track-width;
+  } @else if ($axe: 'vertical') {
+    margin: {
+      top: $track-horizontal-spacing;
+      bottom: $track-horizontal-spacing;
+    }
+    height: $track-width;
+    width: $track-height;
+  }
+}
+// ===============================================>
+// ** Slider
+.sj {
+  @include center(inline-flex, 'cross');
+  // Put an outline when focus on the slider
+  &:focus {
+    outline: none;
+    border: 2px dashed #343434;
+  }
+  // Track
+  &-track {
+    display: inline-block;
+    position: relative;
+    border-radius: $track-height;
+    background-color: $track-color;
+  }
+  // Progress
+  &-progress {
+    position: absolute;
+    background-color: $progress-color;
+    border-radius: $progress-height;
+  }
+  // Thumb
+  &-thumb {
+    @include center;
+    height: $thumb-radius;
+    width: $thumb-radius;
+    border-radius: 50%;
+    background-color: $thumb-color;
+    position: absolute;
+    &::after {
+      content: '';
+      height: $thumb_after-radius;
+      width: $thumb_after-radius;
+      border-radius: 50%;
+      background-color: #fff;
+    }
+    &.active {
+      $thumb-active: $thumb-radius * 1.2;
+      height: $thumb-radius;
+      width: $thumb-radius;
+      &::after {
+        $thumb-active-after-radius: $thumb_after-radius * 1.2;
+        height: $thumb-active-after-radius;
+        width: $thumb-active-after-radius;
+      }
+    }
+  }
+  &-tooltip {
+    background-color: $tooltip-color;
+    color: $tooltip-text-color;
+    position: absolute;
+    min-height: $tooltip-height;
+    min-width: $tooltip-width;
+    @include center(inline-flex);
+    z-index: 99;
+    &::before {
+      content: '';
+      z-index: -1;
+      height: $tooltip-caret-side;
+      width: $tooltip-caret-side;
+      background-color: inherit;
+      position: absolute;
+      transform: rotate(45deg);
+    }
+  }
+  @each $axe in $axes {
+    &-#{$axe} {
+      @if ($axe == 'horizontal') {
+        padding: 10px 15px;
+      } @else {
+        padding: 15px 10px;
+        flex-direction: column;
+      }
+      // Tracks
+      .sj-track {
+        @include track($axe);
+      }
+      // Progress
+      .sj-progress {
+        @include progress($axe);
+      }
+      // Thumbs
+      .sj-thumb {
+        @include thumb($axe);
+      }
+    }
+  }
+  // Tooltips
+  @each $direction in $directions {
+    &-tooltip-#{$direction} {
+      @include tooltip($direction);
+      @include caret($direction);
+    }
+  }
+  //  Slider min and max values
+  &-min,
+  &-max {
+    color: #757575;
+    font-size: 1rem;
+  }
+}
