@@ -38,6 +38,13 @@ class Slider {
     this.initOptions();
     this.makeSlider();
     this.setOptionsOnSlider();
+    this.initOptions();
+    // Delay constants setting to avoid track.offsetWidth error value
+    setTimeout(() => {
+      this.setConstants();
+      this.setProgress();
+      this.initActions();
+    }, 0);
   }
   // Set each option to its appropriate value
   setOption(optionName: string): SN {
@@ -112,11 +119,11 @@ class Slider {
       className: `sj sj-${this.orientation}`
     });
     // Add accessibility attributes to slider element
-    this.accessibilityAttrs.forEach((attr: {name: string, value: string}) => {
+    this.accessibilityAttrs.forEach((attr: { name: string; value: string }) => {
       this.sliderElement.setAttribute(attr.name, attr.value);
     });
     // Append slider first to use its coordinates to position tooltip
-    document.body.append(this.sliderContainer);
+    this.input.parentElement.replaceChild(this.sliderContainer, this.input);
     this.sliderContainer.append(this.sliderElement, this.input);
     this.input.hidden = true;
     // Create slider track
@@ -141,8 +148,45 @@ class Slider {
       createElement('span', { className: 'sj-max', html: `${this.max}` })
     );
   }
+  // Invokes when pressing left arrow key, decrease slider value by 1 step
+  prev() {
+    if (this.value >= this.min + this.step) this.value -= this.step;
+    this.setProgress();
+  }
+  // Invokes when pressing right arrow key, increase slider value by 1 step
+  next() {
+    if (this.value <= this.max - this.step) this.value += this.step;
+    this.setProgress();
+  }
+  // Jump slider value to any arbitrary value depending on pointerdown event and pointermove
+  // But it also make sure that the value is on accord with steps
+  jump() {}
+  // Add event handler for pointerdown, pointermove, pointerup and keydown
+  initActions() {
+    this.sliderElement.addEventListener('keydown', (event: any) => {
+      if (event.code === 'ArrowLeft') this.prev();
+      if (event.code === 'ArrowRight') this.next();
+    });
+  }
+  // Set progress element width depending on slider value
+  setProgress() {
+    const length = this.value - this.min;
+    this.progress.style.width = length * this.pixelsPerValue + 'px';
+    this.tooltip.innerText = this.value;
+  }
+  // Make sure that slider value is always in accord with step
+  redirectVal(value: number) {
+    this.value = Math.round(value / this.step) * this.step;
+    if (this.value > this.max) this.value = Math.floor(this.max / this.step);
+    if (this.value < this.min) this.value = Math.ceil(this.min / this.step);
+  }
+  // Set slider constants, this constants help in later calculations
+  setConstants() {
+    this.pixelsPerValue = this.track.offsetWidth / this._range;
+  }
 }
 const sliderInput = document.querySelector(
   "input[type='range']"
 ) as HTMLInputElement;
-let slider = new Slider(sliderInput, { min: 30, value: 40, max: 50 });
+let slider = new Slider(sliderInput, { min: 30, value: 50, max: 50, step: 1 });
+// ! Add action features to your slider
