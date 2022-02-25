@@ -90,7 +90,7 @@ class Slider {
     this._range = this.options.max - this.options.min;
     // Set default values
     sliderDefaults.value = this.options.min;
-    sliderDefaults.step = this._range / 10;
+    sliderDefaults.step = this._range / 100;
     sliderDefaults.precision = getPrecision(sliderDefaults.step);
     // Values need some calculations
     const options = ['step', 'precision', 'value'];
@@ -128,7 +128,7 @@ class Slider {
       if (coordinates.top + window.scrollY >= tooltipHeight + 20) return 'top';
       else return 'bottom';
     }
-    if (coordinates.top + window.scrollY >= tooltipWidth + 20) return 'left';
+    if (coordinates.left + window.scrollX >= tooltipWidth + 20) return 'left';
     else return 'right';
   }
   // Create and append slider to the document body
@@ -273,9 +273,8 @@ class Slider {
 //   "input[type='range']"
 // ) as HTMLInputElement;
 // let slider = new Slider(sliderInput);
-const sliders = Slider.init("input[type='range'], div");
+const sliders = Slider.init("input[type='range']", {orientation: "vertical"});
 // ! Create multiple range slider have problem with [z-index, tooltip side]
 // ! Add the functionality that transfer value information to the hidden range input
-// ! Make thumb bigger when focus on slider
 // ! Only solving 1st problem should be done on this branch
 // ! Remove this comments after you finish
