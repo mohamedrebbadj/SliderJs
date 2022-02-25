@@ -53,7 +53,6 @@ class Slider {
     this.initOptions();
     this.makeSlider();
     this.setOptionsOnSlider();
-    this.initOptions();
     // Delay constants setting to avoid track.offsetWidth error value
     setTimeout(() => {
       this.setConstants();
@@ -62,7 +61,7 @@ class Slider {
     }, 0);
   }
   // Set each option to its appropriate value
-  setOption(optionName: string): SN {
+  setOption(optionName: string): void {
     const jsOpt: SNU = this.options[optionName];
     const attrOpt = this.input.attributes.getNamedItem(optionName)?.value;
     const defaultOpt = sliderDefaults[optionName];
@@ -75,27 +74,29 @@ class Slider {
     }
     // Ensure that slider value is just a certain number of slider steps
     if (optionName === 'value') {
+      if (this.min === -100) console.log(this.value);
       this.redirectVal(this[optionName]);
+      if (this.min === -100) console.log(this.value);
     }
-    return this[optionName];
   }
   // Init slider options
   initOptions() {
     // Values that don't need any calculations
     const initials = ['min', 'max', 'orientation', 'thumbs'];
     initials.forEach((initial) => {
-      this.options[initial] = this.setOption(initial);
+      this.setOption(initial);
     });
     // Set internal property range
-    this._range = this.options.max - this.options.min;
+    this._range = this.max - this.min;
     // Set default values
-    sliderDefaults.value = this.options.min;
+    sliderDefaults.value = this.min;
     sliderDefaults.step = this._range / 100;
     sliderDefaults.precision = getPrecision(sliderDefaults.step);
     // Values need some calculations
     const options = ['step', 'precision', 'value'];
     options.forEach((option) => {
-      this.options[option] = this.setOption(option);
+      this.setOption(option);
+      delete sliderDefaults[option];
     });
     // Remove all attributes from the input and preserve type attribute
     initials
@@ -110,7 +111,16 @@ class Slider {
   // Set options on slider and input to make debugging easier
   setOptionsOnSlider() {
     const inputOptions = ['step', 'min', 'max', 'value'];
-    for (const option in this.options) {
+    const sliderProperties = [
+      'step',
+      'min',
+      'max',
+      'value',
+      'thumbs',
+      'precision',
+      'orientation'
+    ];
+    for (const option of sliderProperties) {
       this.sliderElement.setAttribute(`data-${option}`, `${this[option]}`);
       if (inputOptions.includes(option)) {
         this.input.setAttribute(`${option}`, `${this[option]}`);
@@ -219,13 +229,15 @@ class Slider {
       };
     });
     // Make slider track and slider progress wider when focus on slider
-    const oppositeDim = this.dimension === "width" ? "height" : "width";
+    const oppositeDim = this.dimension === 'width' ? 'height' : 'width';
     const oppositeDimOffset = `offset${oppositeDim.capitalize()}`;
-    this.sliderElement.addEventListener("focus", () => {
-      this.progress.style[oppositeDim] = this.track[oppositeDimOffset] * 1.2 + "px";
+    this.sliderElement.addEventListener('focus', () => {
+      this.progress.style[oppositeDim] =
+        this.track[oppositeDimOffset] * 1.2 + 'px';
     });
-    this.sliderElement.addEventListener("blur", () => {
-      this.progress.style[oppositeDim] = this.track[oppositeDimOffset] / 1.2 + "px";
+    this.sliderElement.addEventListener('blur', () => {
+      this.progress.style[oppositeDim] =
+        this.track[oppositeDimOffset] / 1.2 + 'px';
     });
   }
   // Set progress element width depending on slider value
@@ -260,7 +272,9 @@ class Slider {
           element.getAttribute('type') === 'range'
         );
       })
-      .map((input) => new Slider(input as HTMLInputElement, options));
+      .map((input) => {
+        return new Slider(input as HTMLInputElement, options);
+      });
     if (sliders.length !== elements.length) {
       console.warn(
         "Slider class make only input[type='range'] into sliders!, Make sure all the provided elements are range input"
@@ -273,8 +287,9 @@ class Slider {
 //   "input[type='range']"
 // ) as HTMLInputElement;
 // let slider = new Slider(sliderInput);
-const sliders = Slider.init("input[type='range']", {orientation: "vertical"});
+const sliders = Slider.init("input[type='range']", { orientation: 'vertical' });
 // ! Create multiple range slider have problem with [z-index, tooltip side]
 // ! Add the functionality that transfer value information to the hidden range input
 // ! Only solving 1st problem should be done on this branch
 // ! Remove this comments after you finish
+// ! Add Precision
