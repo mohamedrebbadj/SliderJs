@@ -200,7 +200,8 @@ class Slider {
       if (!thumb || !this.track.contains(thumb)) {
         this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
         this.setProgress();
-      } else { // Actions when the suer clicks on the thumb
+      } else {
+        // Actions when the suer clicks on the thumb
         // With the user pointerdown on the thumb we add pointermove event handler
         this.track.onpointermove = (event: any) => {
           this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
@@ -225,8 +226,10 @@ class Slider {
   redirectVal(value: number) {
     this.value = Math.round(value / this.step) * this.step;
     // Make sure that slider value is not out of range
-    if (this.value > this.max) this.value = Math.floor(this.max / this.step) * this.step;
-    if (this.value < this.min) this.value = Math.ceil(this.min / this.step) * this.step;
+    if (this.value > this.max)
+      this.value = Math.floor(this.max / this.step) * this.step;
+    if (this.value < this.min)
+      this.value = Math.ceil(this.min / this.step) * this.step;
   }
   // Set slider constants, this constants help in later calculations
   setConstants() {
@@ -234,8 +237,32 @@ class Slider {
     const offsetDim = `offset${this.dimension.capitalize()}`;
     this.pixelsPerValue = this.track[offsetDim] / this._range;
   }
+  // Create sliders using the provided selector
+  static init(selector: string, options: Obj = {}) {
+    const elements = Array.from(document.querySelectorAll(selector));
+    const sliders = elements
+      .filter((element) => {
+        return (
+          element.tagName === 'INPUT' &&
+          element.getAttribute('type') === 'range'
+        );
+      })
+      .map((input) => new Slider(input as HTMLInputElement, options));
+    if (sliders.length !== elements.length) {
+      console.warn(
+        "Slider class make only input[type='range'] into sliders!, Make sure all the provided elements are range input"
+      );
+    }
+    return sliders;
+  }
 }
-const sliderInput = document.querySelector(
-  "input[type='range']"
-) as HTMLInputElement;
-let slider = new Slider(sliderInput);
+// const sliderInput = document.querySelector(
+//   "input[type='range']"
+// ) as HTMLInputElement;
+// let slider = new Slider(sliderInput);
+const sliders = Slider.init("input[type='range'], div");
+// ! Create multiple range slider have problem with [z-index, tooltip side]
+// ! Add the functionality that transfer value information to the hidden range input
+// ! Make thumb bigger when focus on slider
+// ! Only solving 1st problem should be done on this branch
+// ! Remove this comments after you finish
