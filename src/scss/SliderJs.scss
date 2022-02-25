@@ -152,6 +152,7 @@ $thumb_after-radius: math.div($thumb-radius * 60, 100);
 // ===============================================>
 // ** Slider
 .sj {
+  user-select: none;
   @include center(inline-flex, 'cross');
   // Put an outline when focus on the slider
   &:focus {

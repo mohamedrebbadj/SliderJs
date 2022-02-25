@@ -1,8 +1,23 @@
-type Attributes = { name: string; value: string }[];
+export {};
 type SN = string | number;
 type SNU = SN | undefined;
 type Obj = { [index: string]: any };
-// ** Helper functions
+declare global {
+  interface String {
+    capitalize: () => string;
+  }
+}
+// ** Helper Methods
+// ====> Capitalize a string
+if (!('capitalize' in String.prototype)) {
+  Object.defineProperty(String.prototype, 'capitalize', {
+    value: function () {
+      return this.charAt(0).toUpperCase() + this.slice(1);
+    },
+    enumerable: false
+  });
+}
+// ** Helper Functions
 // ====> Get precision of a float number
 function getPrecision(num: unknown): number {
   if (typeof num === 'number') return num.toString().split('.')[1]?.length || 0;
@@ -28,7 +43,7 @@ const sliderDefaults: Obj = {
 // ** Slider Class
 class Slider {
   [index: string]: any;
-  constructor(public input: HTMLInputElement, private options: Obj) {
+  constructor(public input: HTMLInputElement, private options: Obj = {}) {
     this.accessibilityAttrs = [
       {
         name: 'tabIndex',
@@ -58,6 +73,10 @@ class Slider {
     if (jsOpt !== undefined && jsOpt !== defaultOpt) {
       this[optionName] = typeof defaultOpt === 'number' ? +jsOpt : jsOpt;
     }
+    // Ensure that slider value is just a certain number of slider steps
+    if (optionName === 'value') {
+      this.redirectVal(this[optionName]);
+    }
     return this[optionName];
   }
   // Init slider options
@@ -83,6 +102,10 @@ class Slider {
       .concat(options)
       .forEach((option) => this.input.removeAttribute(option));
     this.input.setAttribute('type', 'range');
+    // Determine whether to use x or y coordinate to calculate slider value
+    this.axis = this.orientation === 'horizontal' ? 'offsetX' : 'offsetY';
+    // Determine whether to use height or width to resize slider progress
+    this.dimension = this.orientation === 'horizontal' ? 'width' : 'height';
   }
   // Set options on slider and input to make debugging easier
   setOptionsOnSlider() {
@@ -163,30 +186,56 @@ class Slider {
   jump() {}
   // Add event handler for pointerdown, pointermove, pointerup and keydown
   initActions() {
+    // Add key control to slider
     this.sliderElement.addEventListener('keydown', (event: any) => {
       if (event.code === 'ArrowLeft') this.prev();
       if (event.code === 'ArrowRight') this.next();
     });
+    // Add Mouse and touch controls
+    this.track.addEventListener('pointerdown', (event: any) => {
+      const thumb = event.target.closest('.sj-thumb');
+      // Attach future pointerEvents to slider track
+      this.track.setPointerCapture(event.pointerId);
+      // Action When the user clicks on the track not on the thumb
+      if (!thumb || !this.track.contains(thumb)) {
+        this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
+        this.setProgress();
+      } else { // Actions when the suer clicks on the thumb
+        // With the user pointerdown on the thumb we add pointermove event handler
+        this.track.onpointermove = (event: any) => {
+          this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
+          this.setProgress();
+        };
+      }
+      // Remove event handlers that aren't needed
+      this.track.onpointerup = () => {
+        this.track.onpointermove = null;
+        this.track.onpointerup = null;
+      };
+    });
   }
   // Set progress element width depending on slider value
   setProgress() {
+    // Length of the slider value
     const length = this.value - this.min;
-    this.progress.style.width = length * this.pixelsPerValue + 'px';
+    this.progress.style[this.dimension] = length * this.pixelsPerValue + 'px';
     this.tooltip.innerText = this.value;
   }
   // Make sure that slider value is always in accord with step
   redirectVal(value: number) {
     this.value = Math.round(value / this.step) * this.step;
-    if (this.value > this.max) this.value = Math.floor(this.max / this.step);
-    if (this.value < this.min) this.value = Math.ceil(this.min / this.step);
+    // Make sure that slider value is not out of range
+    if (this.value > this.max) this.value = Math.floor(this.max / this.step) * this.step;
+    if (this.value < this.min) this.value = Math.ceil(this.min / this.step) * this.step;
   }
   // Set slider constants, this constants help in later calculations
   setConstants() {
-    this.pixelsPerValue = this.track.offsetWidth / this._range;
+    // Compose the property that we should use depending on slider orientation
+    const offsetDim = `offset${this.dimension.capitalize()}`;
+    this.pixelsPerValue = this.track[offsetDim] / this._range;
   }
 }
 const sliderInput = document.querySelector(
   "input[type='range']"
 ) as HTMLInputElement;
-let slider = new Slider(sliderInput, { min: 30, value: 50, max: 50, step: 1 });
-// ! Add action features to your slider
+let slider = new Slider(sliderInput);
