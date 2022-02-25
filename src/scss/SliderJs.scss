@@ -158,6 +158,21 @@ $thumb_after-radius: math.div($thumb-radius * 60, 100);
   &:focus {
     outline: none;
     border: 2px dashed #343434;
+    // Increase thumb size
+    &-thumb {
+      $thumb-active: $thumb-radius * 1.4;
+      height: $thumb-active;
+      width: $thumb-active;
+      &::after {
+        $thumb-active-after-radius: $thumb_after-radius * 1.4;
+        height: $thumb-active-after-radius;
+        width: $thumb-active-after-radius;
+      }
+    }
+  }
+  // Make slider container inline block like the default browser range
+  &-container {
+    display: inline-block;
   }
   // Track
   &-track {
@@ -186,16 +201,6 @@ $thumb_after-radius: math.div($thumb-radius * 60, 100);
       width: $thumb_after-radius;
       border-radius: 50%;
       background-color: #fff;
-    }
-    &.active {
-      $thumb-active: $thumb-radius * 1.2;
-      height: $thumb-radius;
-      width: $thumb-radius;
-      &::after {
-        $thumb-active-after-radius: $thumb_after-radius * 1.2;
-        height: $thumb-active-after-radius;
-        width: $thumb-active-after-radius;
-      }
     }
   }
   &-tooltip {

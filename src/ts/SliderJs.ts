@@ -202,6 +202,8 @@ class Slider {
         this.setProgress();
       } else {
         // Actions when the suer clicks on the thumb
+        // Make thumb bigger when the user click on it
+        thumb.classList.add('active');
         // With the user pointerdown on the thumb we add pointermove event handler
         this.track.onpointermove = (event: any) => {
           this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
@@ -212,7 +214,18 @@ class Slider {
       this.track.onpointerup = () => {
         this.track.onpointermove = null;
         this.track.onpointerup = null;
+        // Set back thumb size to its normal size
+        if (thumb) thumb.classList.remove('active');
       };
+    });
+    // Make slider track and slider progress wider when focus on slider
+    const oppositeDim = this.dimension === "width" ? "height" : "width";
+    const oppositeDimOffset = `offset${oppositeDim.capitalize()}`;
+    this.sliderElement.addEventListener("focus", () => {
+      this.progress.style[oppositeDim] = this.track[oppositeDimOffset] * 1.2 + "px";
+    });
+    this.sliderElement.addEventListener("blur", () => {
+      this.progress.style[oppositeDim] = this.track[oppositeDimOffset] / 1.2 + "px";
     });
   }
   // Set progress element width depending on slider value
