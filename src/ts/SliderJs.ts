@@ -50,6 +50,7 @@ class Slider {
         value: '1'
       }
     ];
+    this.passValue();
     this.initOptions();
     this.makeSlider();
     this.setOptionsOnSlider();
@@ -164,7 +165,7 @@ class Slider {
     // Append slider first to use its coordinates to position tooltip
     this.input.parentElement.replaceChild(this.sliderContainer, this.input);
     this.sliderContainer.append(this.sliderElement, this.input);
-    // this.input.hidden = true;
+    this.input.hidden = true;
     // Create slider track
     this.track = createElement('div', { className: 'sj-track' });
     // Create and append tooltip and slider thumb to slider track
@@ -231,7 +232,9 @@ class Slider {
           this.setProgress();
         };
         // Prevent default browser drag event on slider thumb
-        thumb.addEventListener("dragstart", (event: any) => {event.preventDefault});
+        thumb.addEventListener('dragstart', (event: any) => {
+          event.preventDefault;
+        });
       }
       // Remove event handlers that aren't needed
       this.track.onpointerup = (event: any) => {
@@ -271,13 +274,31 @@ class Slider {
     // In some cases Math.round(this.max / this.step) * this.step is bigger than this.max by 1 step at most
     // So we decrease value by one step
     if (value > this.max) value -= this.step;
-    this.value = +value.toFixed(this.precision);
+    this.proxyThis.value = +value.toFixed(this.precision);
   }
   // Set slider constants, this constants help in later calculations
   setConstants() {
     // Compose the property that we should use depending on slider orientation
     const offsetDim = `offset${this.dimension.capitalize()}`;
     this.pixelsPerValue = this.track[offsetDim] / this._range;
+  }
+  private passValue() {
+    // Reflect changes on the hidden input
+    this.proxyThis = new Proxy(this, {
+      set(target, property, value) {
+        if (property === 'value') {
+          target.value = value;
+          target.input.value = value;
+          // The input may auto correct its value, and we get the value and set it back to slider
+          if (target.input.value != target.value) {
+            target.value = 0;
+            target.value = +target.input.value;
+          }
+          target.input.setAttribute(property, value);
+        }
+        return true;
+      }
+    });
   }
   // Create sliders using the provided selector
   static init(selector: string, options: Obj = {}) {
@@ -306,4 +327,3 @@ class Slider {
 // let slider = new Slider(sliderInput);
 const sliders = Slider.init("input[type='range']", { orientation: 'vertical' });
 // ! Create multiple range slider have problem with [z-index, tooltip side]
-// ! Add the functionality that transfer value information to the hidden range input
