@@ -76,7 +76,8 @@ class Slider {
     if (optionName === 'step') {
       const precision = getPrecision(this.step);
       // Define max precision when the precision is not provided by the user
-      sliderDefaults.precision = precision > 4 ? getPrecision(+this.step.toFixed(4)) : precision;
+      sliderDefaults.precision =
+        precision > 4 ? getPrecision(+this.step.toFixed(4)) : precision;
     }
     // Ensure that slider value is just a certain number of slider steps
     if (optionName === 'value') {
@@ -220,10 +221,7 @@ class Slider {
       // Attach future pointerEvents to slider track
       this.track.setPointerCapture(event.pointerId);
       // Action When the user clicks on the track not on the thumb
-      if (!thumb || !this.track.contains(thumb)) {
-        this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
-        this.setProgress();
-      } else {
+      if (thumb && this.track.contains(thumb)) {
         // Actions when the suer clicks on the thumb
         // Make thumb bigger when the user click on it
         thumb.classList.add('active');
@@ -232,9 +230,13 @@ class Slider {
           this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
           this.setProgress();
         };
+        // Prevent default browser drag event on slider thumb
+        thumb.addEventListener("dragstart", (event: any) => {event.preventDefault});
       }
       // Remove event handlers that aren't needed
-      this.track.onpointerup = () => {
+      this.track.onpointerup = (event: any) => {
+        this.redirectVal(event[this.axis] / this.pixelsPerValue + this.min);
+        this.setProgress();
         this.track.onpointermove = null;
         this.track.onpointerup = null;
         // Set back thumb size to its normal size
@@ -265,11 +267,11 @@ class Slider {
     // Make sure that value is in slider range
     value = value < this.min ? this.min : value > this.max ? this.max : value;
     // Make the provided value harmonize with slider steps
-    value = Math.floor((value - this.min) / this.step) * this.step + this.min;
-    // Put boundaries so slider value is never out of range
-    if (value >= this.min && value <= this.max) {
-      this.value = +value.toFixed(this.precision);
-    }
+    value = Math.round((value - this.min) / this.step) * this.step + this.min;
+    // In some cases Math.round(this.max / this.step) * this.step is bigger than this.max by 1 step at most
+    // So we decrease value by one step
+    if (value > this.max) value -= this.step;
+    this.value = +value.toFixed(this.precision);
   }
   // Set slider constants, this constants help in later calculations
   setConstants() {
@@ -302,6 +304,6 @@ class Slider {
 //   "input[type='range']"
 // ) as HTMLInputElement;
 // let slider = new Slider(sliderInput);
-const sliders = Slider.init("input[type='range']", { orientation: 'vertical', precision: 2 });
+const sliders = Slider.init("input[type='range']", { orientation: 'vertical' });
 // ! Create multiple range slider have problem with [z-index, tooltip side]
 // ! Add the functionality that transfer value information to the hidden range input
