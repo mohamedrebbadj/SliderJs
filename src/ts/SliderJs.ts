@@ -74,9 +74,7 @@ class Slider {
     }
     // Ensure that slider value is just a certain number of slider steps
     if (optionName === 'value') {
-      if (this.min === -100) console.log(this.value);
       this.redirectVal(this[optionName]);
-      if (this.min === -100) console.log(this.value);
     }
   }
   // Init slider options
@@ -158,7 +156,7 @@ class Slider {
     // Append slider first to use its coordinates to position tooltip
     this.input.parentElement.replaceChild(this.sliderContainer, this.input);
     this.sliderContainer.append(this.sliderElement, this.input);
-    this.input.hidden = true;
+    // this.input.hidden = true;
     // Create slider track
     this.track = createElement('div', { className: 'sj-track' });
     // Create and append tooltip and slider thumb to slider track
@@ -198,8 +196,16 @@ class Slider {
   initActions() {
     // Add key control to slider
     this.sliderElement.addEventListener('keydown', (event: any) => {
-      if (event.code === 'ArrowLeft') this.prev();
-      if (event.code === 'ArrowRight') this.next();
+      if (this.orientation === 'vertical') {
+        if (event.code === 'ArrowLeft' || event.code === 'ArrowUp') this.prev();
+        if (event.code === 'ArrowRight' || event.code === 'ArrowDown')
+          this.next();
+      } else if (this.orientation === 'horizontal') {
+        if (event.code === 'ArrowLeft' || event.code === 'ArrowDown')
+          this.prev();
+        if (event.code === 'ArrowRight' || event.code === 'ArrowUp')
+          this.next();
+      }
     });
     // Add Mouse and touch controls
     this.track.addEventListener('pointerdown', (event: any) => {
@@ -249,12 +255,12 @@ class Slider {
   }
   // Make sure that slider value is always in accord with step
   redirectVal(value: number) {
-    this.value = Math.round(value / this.step) * this.step;
-    // Make sure that slider value is not out of range
-    if (this.value > this.max)
-      this.value = Math.floor(this.max / this.step) * this.step;
-    if (this.value < this.min)
-      this.value = Math.ceil(this.min / this.step) * this.step;
+    // Make the provided value harmonize with slider steps
+    value = Math.floor((value - this.min) / this.step) * this.step + this.min;
+    // Put boundaries so slider value is never out of range
+    if (value >= this.min && value <= this.max) {
+      this.value = value;
+    }
   }
   // Set slider constants, this constants help in later calculations
   setConstants() {
@@ -292,4 +298,5 @@ const sliders = Slider.init("input[type='range']", { orientation: 'vertical' });
 // ! Add the functionality that transfer value information to the hidden range input
 // ! Only solving 1st problem should be done on this branch
 // ! Remove this comments after you finish
+// ! Fix float point problem
 // ! Add Precision
