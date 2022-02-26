@@ -69,8 +69,14 @@ class Slider {
     if (attrOpt !== undefined) {
       this[optionName] = typeof defaultOpt === 'number' ? +attrOpt : attrOpt;
     }
-    if (jsOpt !== undefined && jsOpt !== defaultOpt) {
+    if (jsOpt !== undefined) {
       this[optionName] = typeof defaultOpt === 'number' ? +jsOpt : jsOpt;
+    }
+    // Set default precision to be the final step value precision
+    if (optionName === 'step') {
+      const precision = getPrecision(this.step);
+      // Define max precision when the precision is not provided by the user
+      sliderDefaults.precision = precision > 4 ? getPrecision(+this.step.toFixed(4)) : precision;
     }
     // Ensure that slider value is just a certain number of slider steps
     if (optionName === 'value') {
@@ -89,13 +95,14 @@ class Slider {
     // Set default values
     sliderDefaults.value = this.min;
     sliderDefaults.step = this._range / 100;
-    sliderDefaults.precision = getPrecision(sliderDefaults.step);
     // Values need some calculations
     const options = ['step', 'precision', 'value'];
     options.forEach((option) => {
       this.setOption(option);
       delete sliderDefaults[option];
     });
+    // Define slider step based on slider precision
+    this.step = +this.step.toFixed(this.precision);
     // Remove all attributes from the input and preserve type attribute
     initials
       .concat(options)
@@ -162,7 +169,7 @@ class Slider {
     // Create and append tooltip and slider thumb to slider track
     this.tooltip = createElement('div', {
       className: `sj-tooltip`,
-      html: `${this.value}`
+      html: `${this.value.toFixed(this.precision)}`
     });
     // Create slider progress and append thumb and tooltip to it
     this.progress = createElement('div', { className: `sj-progress` });
@@ -251,15 +258,17 @@ class Slider {
     // Length of the slider value
     const length = this.value - this.min;
     this.progress.style[this.dimension] = length * this.pixelsPerValue + 'px';
-    this.tooltip.innerText = this.value;
+    this.tooltip.innerText = this.value.toFixed(this.precision);
   }
   // Make sure that slider value is always in accord with step
   redirectVal(value: number) {
+    // Make sure that value is in slider range
+    value = value < this.min ? this.min : value > this.max ? this.max : value;
     // Make the provided value harmonize with slider steps
     value = Math.floor((value - this.min) / this.step) * this.step + this.min;
     // Put boundaries so slider value is never out of range
     if (value >= this.min && value <= this.max) {
-      this.value = value;
+      this.value = +value.toFixed(this.precision);
     }
   }
   // Set slider constants, this constants help in later calculations
@@ -293,10 +302,6 @@ class Slider {
 //   "input[type='range']"
 // ) as HTMLInputElement;
 // let slider = new Slider(sliderInput);
-const sliders = Slider.init("input[type='range']", { orientation: 'vertical' });
+const sliders = Slider.init("input[type='range']", { orientation: 'vertical', precision: 2 });
 // ! Create multiple range slider have problem with [z-index, tooltip side]
 // ! Add the functionality that transfer value information to the hidden range input
-// ! Only solving 1st problem should be done on this branch
-// ! Remove this comments after you finish
-// ! Fix float point problem
-// ! Add Precision

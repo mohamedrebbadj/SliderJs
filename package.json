@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "My webpack project",
   "main": "index.js",
+  "homepage": "https://mohamedrebbadj.github.io",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode=development --node-env=development",
