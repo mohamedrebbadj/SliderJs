@@ -59,6 +59,7 @@ class Slider {
       this.setConstants();
       this.setProgress();
       this.initActions();
+      this.posTooltip();
     }, 0);
   }
   // Set each option to its appropriate value
@@ -137,16 +138,21 @@ class Slider {
   }
   // Determine the right side to display tooltip
   posTooltip() {
-    const coordinates = this.sliderElement.getBoundingClientRect();
+    const coordinates = this.progress.getBoundingClientRect();
     const tooltipHeight = this.tooltip.offsetHeight;
     const tooltipWidth = this.tooltip.offsetWidth;
+    const tooltipHoverDistance = 15;
+    let tooltipSide: string;
     // Todo: Find more precise way to position tooltip than adding 20px [represent distance between side of track and the side of tooltip]
     if (this.orientation === 'horizontal') {
-      if (coordinates.top + window.scrollY >= tooltipHeight + 20) return 'top';
-      else return 'bottom';
+      if (coordinates.top + window.scrollY >= tooltipHeight + tooltipHoverDistance)
+        tooltipSide = 'top';
+      else tooltipSide = 'bottom';
     }
-    if (coordinates.left + window.scrollX >= tooltipWidth + 20) return 'left';
-    else return 'right';
+    if (coordinates.left + window.scrollX >= tooltipWidth + tooltipHoverDistance)
+      tooltipSide = 'left';
+    else tooltipSide = 'right';
+    this.tooltip.classList.add(`sj-tooltip-${tooltipSide}`);
   }
   // Create and append slider to the document body
   makeSlider() {
@@ -180,7 +186,6 @@ class Slider {
       createElement('div', { className: 'sj-thumb' })
     );
     this.track.append(this.progress);
-    this.tooltip.classList.add(`sj-tooltip-${this.posTooltip()}`);
     // Create and append min, slider track and max elements to slider
     this.sliderElement.append(
       createElement('span', { className: 'sj-min', html: `${this.min}` }),
@@ -326,4 +331,5 @@ class Slider {
 // ) as HTMLInputElement;
 // let slider = new Slider(sliderInput);
 const sliders = Slider.init("input[type='range']", { orientation: 'vertical' });
-// ! Create multiple range slider have problem with [z-index, tooltip side]
+// ! Create multiple range slider have problem with z-index
+// ! tooltip side

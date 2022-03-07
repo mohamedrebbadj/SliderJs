@@ -2,7 +2,6 @@
 // ! Documentation:
 // ? Start with the name of the element and then the type of info the variable holds: thumb[-color]
 // ? The name of the pseudo-elements in the variables must be preceded by an underscore as follows: thumb[_after]-color.
-
 // Colors
 $tooltip-color: #3a0ca3;
 $tooltip-text-color: #ffffff;
@@ -19,6 +18,7 @@ $tooltip-width: 90px;
 $progress-height: $track-height;
 $progress-width: 0;
 $tooltip-caret-side: 15px;
+$tooltip-caret-half-side: math.div($tooltip-caret-side, 2);
 // Orientation
 $directions: 'right', 'left', 'top', 'bottom';
 $axes: 'vertical', 'horizontal';
@@ -46,19 +46,18 @@ $thumb_after-radius: math.div($thumb-radius * 60, 100);
 // ? Lay out tooltip caret style based on direction argument ,direction to opposite direction [top means from top to bottom]
 @mixin caret($direction: 'left') {
   &::before {
+    $transform: null;
     @if ($direction == 'top') {
-      left: auto;
-      top: $tooltip-height - math.div($tooltip-caret-side, 2);
+      $transform: translateY($tooltip-height - $tooltip-caret-half-side);
     } @else if ($direction == 'bottom') {
-      left: auto;
-      top: math.div($tooltip-caret-side, 2) * -1;
+      $transform: translateY(-$tooltip-caret-half-side);
     } @else if ($direction == 'left') {
-      top: auto;
-      left: $tooltip-width - math.div($tooltip-caret-side, 2);
+      $transform: translateX($tooltip-width - $tooltip-caret-half-side);
     } @else if ($direction == 'right') {
-      top: auto;
-      left: math.div($tooltip-caret-side, 2) * -1;
+      $transform: translateX(-$tooltip-caret-half-side);
     }
+    transform: #{$transform} rotate(45deg);
+    left: 0;
   }
 }
 // ===============================================>
@@ -218,7 +217,6 @@ $thumb_after-radius: math.div($thumb-radius * 60, 100);
       width: $tooltip-caret-side;
       background-color: inherit;
       position: absolute;
-      transform: rotate(45deg);
     }
   }
   @each $axe in $axes {
