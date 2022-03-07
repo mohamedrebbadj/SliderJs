@@ -49,15 +49,18 @@ $thumb_after-radius: math.div($thumb-radius * 60, 100);
     $transform: null;
     @if ($direction == 'top') {
       $transform: translateY($tooltip-height - $tooltip-caret-half-side);
+      top: 0;
     } @else if ($direction == 'bottom') {
       $transform: translateY(-$tooltip-caret-half-side);
+      top: 0;
     } @else if ($direction == 'left') {
       $transform: translateX($tooltip-width - $tooltip-caret-half-side);
+      left: 0;
     } @else if ($direction == 'right') {
       $transform: translateX(-$tooltip-caret-half-side);
+      left: 0;
     }
     transform: #{$transform} rotate(45deg);
-    left: 0;
   }
 }
 // ===============================================>

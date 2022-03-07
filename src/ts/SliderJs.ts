@@ -143,15 +143,25 @@ class Slider {
     const tooltipWidth = this.tooltip.offsetWidth;
     const tooltipHoverDistance = 15;
     let tooltipSide: string;
-    // Todo: Find more precise way to position tooltip than adding 20px [represent distance between side of track and the side of tooltip]
     if (this.orientation === 'horizontal') {
-      if (coordinates.top + window.scrollY >= tooltipHeight + tooltipHoverDistance)
+      if (
+        coordinates.top + window.scrollY >=
+        tooltipHeight + tooltipHoverDistance
+      ) {
         tooltipSide = 'top';
-      else tooltipSide = 'bottom';
+      } else {
+        tooltipSide = 'bottom';
+      }
+    } else if (this.orientation === 'vertical') {
+      if (
+        coordinates.left + window.scrollX >=
+        tooltipWidth + tooltipHoverDistance
+      ) {
+        tooltipSide = 'left';
+      } else {
+        tooltipSide = 'right';
+      }
     }
-    if (coordinates.left + window.scrollX >= tooltipWidth + tooltipHoverDistance)
-      tooltipSide = 'left';
-    else tooltipSide = 'right';
     this.tooltip.classList.add(`sj-tooltip-${tooltipSide}`);
   }
   // Create and append slider to the document body
@@ -326,10 +336,7 @@ class Slider {
     return sliders;
   }
 }
-// const sliderInput = document.querySelector(
-//   "input[type='range']"
-// ) as HTMLInputElement;
-// let slider = new Slider(sliderInput);
-const sliders = Slider.init("input[type='range']", { orientation: 'vertical' });
-// ! Create multiple range slider have problem with z-index
-// ! tooltip side
+const sliderInput = document.querySelector(
+  "input[type='range']"
+) as HTMLInputElement;
+let slider = new Slider(sliderInput);
