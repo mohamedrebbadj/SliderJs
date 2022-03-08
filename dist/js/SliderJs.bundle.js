@@ -1,4 +1,14 @@
-/******/ (() => { // webpackBootstrap
+(function webpackUniversalModuleDefinition(root, factory) {
+	if(typeof exports === 'object' && typeof module === 'object')
+		module.exports = factory();
+	else if(typeof define === 'function' && define.amd)
+		define([], factory);
+	else if(typeof exports === 'object')
+		exports["SJ"] = factory();
+	else
+		root["SJ"] = factory();
+})(self, function() {
+return /******/ (() => { // webpackBootstrap
 /******/ 	var __webpack_modules__ = ({
 
 /***/ "./src/ts/SliderJs.ts":
@@ -9,6 +19,9 @@
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "init": () => (/* binding */ init)
+/* harmony export */ });
 /* harmony import */ var core_js_modules_es6_array_slice_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! core-js/modules/es6.array.slice.js */ "../../../../node_modules/core-js/modules/es6.array.slice.js");
 /* harmony import */ var core_js_modules_es6_array_slice_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es6_array_slice_js__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var core_js_modules_es6_regexp_split_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! core-js/modules/es6.regexp.split.js */ "../../../../node_modules/core-js/modules/es6.regexp.split.js");
@@ -111,6 +124,7 @@ function () {
       name: 'tabIndex',
       value: '1'
     }];
+    this.passValue();
     this.initOptions();
     this.makeSlider();
     this.setOptionsOnSlider(); // Delay constants setting to avoid track.offsetWidth error value
@@ -121,6 +135,8 @@ function () {
       _this.setProgress();
 
       _this.initActions();
+
+      _this.posTooltip();
     }, 0);
   } // Set each option to its appropriate value
 
@@ -206,15 +222,27 @@ function () {
 
 
   Slider.prototype.posTooltip = function () {
-    var coordinates = this.sliderElement.getBoundingClientRect();
+    var coordinates = this.progress.getBoundingClientRect();
     var tooltipHeight = this.tooltip.offsetHeight;
-    var tooltipWidth = this.tooltip.offsetWidth; // Todo: Find more precise way to position tooltip than adding 20px [represent distance between side of track and the side of tooltip]
+    var tooltipWidth = this.tooltip.offsetWidth;
+    var tooltipHoverDistance = 15;
+    var tooltipSide;
 
     if (this.orientation === 'horizontal') {
-      if (coordinates.top + window.scrollY >= tooltipHeight + 20) return 'top';else return 'bottom';
+      if (coordinates.top + window.scrollY >= tooltipHeight + tooltipHoverDistance) {
+        tooltipSide = 'top';
+      } else {
+        tooltipSide = 'bottom';
+      }
+    } else if (this.orientation === 'vertical') {
+      if (coordinates.left + window.scrollX >= tooltipWidth + tooltipHoverDistance) {
+        tooltipSide = 'left';
+      } else {
+        tooltipSide = 'right';
+      }
     }
 
-    if (coordinates.left + window.scrollX >= tooltipWidth + 20) return 'left';else return 'right';
+    this.tooltip.classList.add("sj-tooltip-".concat(tooltipSide));
   }; // Create and append slider to the document body
 
 
@@ -237,8 +265,8 @@ function () {
     }); // Append slider first to use its coordinates to position tooltip
 
     this.input.parentElement.replaceChild(this.sliderContainer, this.input);
-    this.sliderContainer.append(this.sliderElement, this.input); // this.input.hidden = true;
-    // Create slider track
+    this.sliderContainer.append(this.sliderElement, this.input);
+    this.input.hidden = true; // Create slider track
 
     this.track = createElement('div', {
       className: 'sj-track'
@@ -255,8 +283,7 @@ function () {
     this.progress.append(this.tooltip, createElement('div', {
       className: 'sj-thumb'
     }));
-    this.track.append(this.progress);
-    this.tooltip.classList.add("sj-tooltip-".concat(this.posTooltip())); // Create and append min, slider track and max elements to slider
+    this.track.append(this.progress); // Create and append min, slider track and max elements to slider
 
     this.sliderElement.append(createElement('span', {
       className: 'sj-min',
@@ -304,11 +331,7 @@ function () {
       _this.track.setPointerCapture(event.pointerId); // Action When the user clicks on the track not on the thumb
 
 
-      if (!thumb || !_this.track.contains(thumb)) {
-        _this.redirectVal(event[_this.axis] / _this.pixelsPerValue + _this.min);
-
-        _this.setProgress();
-      } else {
+      if (thumb && _this.track.contains(thumb)) {
         // Actions when the suer clicks on the thumb
         // Make thumb bigger when the user click on it
         thumb.classList.add('active'); // With the user pointerdown on the thumb we add pointermove event handler
@@ -317,11 +340,20 @@ function () {
           _this.redirectVal(event[_this.axis] / _this.pixelsPerValue + _this.min);
 
           _this.setProgress();
-        };
+        }; // Prevent default browser drag event on slider thumb
+
+
+        thumb.addEventListener('dragstart', function (event) {
+          event.preventDefault;
+        });
       } // Remove event handlers that aren't needed
 
 
-      _this.track.onpointerup = function () {
+      _this.track.onpointerup = function (event) {
+        _this.redirectVal(event[_this.axis] / _this.pixelsPerValue + _this.min);
+
+        _this.setProgress();
+
         _this.track.onpointermove = null;
         _this.track.onpointerup = null; // Set back thumb size to its normal size
 
@@ -352,11 +384,11 @@ function () {
     // Make sure that value is in slider range
     value = value < this.min ? this.min : value > this.max ? this.max : value; // Make the provided value harmonize with slider steps
 
-    value = Math.floor((value - this.min) / this.step) * this.step + this.min; // Put boundaries so slider value is never out of range
+    value = Math.round((value - this.min) / this.step) * this.step + this.min; // In some cases Math.round(this.max / this.step) * this.step is bigger than this.max by 1 step at most
+    // So we decrease value by one step
 
-    if (value >= this.min && value <= this.max) {
-      this.value = +value.toFixed(this.precision);
-    }
+    if (value > this.max) value -= this.step;
+    this.proxyThis.value = +value.toFixed(this.precision);
   }; // Set slider constants, this constants help in later calculations
 
 
@@ -364,41 +396,65 @@ function () {
     // Compose the property that we should use depending on slider orientation
     var offsetDim = "offset".concat(this.dimension.capitalize());
     this.pixelsPerValue = this.track[offsetDim] / this._range;
-  }; // Create sliders using the provided selector
+  };
 
+  Slider.prototype.passValue = function () {
+    // Reflect changes on the hidden input
+    this.proxyThis = new Proxy(this, {
+      set: function set(target, property, value) {
+        if (property === 'value') {
+          target.value = value;
+          target.input.value = value; // The input may auto correct its value, and we get the value and set it back to slider
 
-  Slider.init = function (selector, options) {
-    if (options === void 0) {
-      options = {};
-    }
+          if (target.input.value != target.value) {
+            target.value = 0;
+            target.value = +target.input.value;
+          }
 
-    var elements = Array.from(document.querySelectorAll(selector));
-    var sliders = elements.filter(function (element) {
-      return element.tagName === 'INPUT' && element.getAttribute('type') === 'range';
-    }).map(function (input) {
-      return new Slider(input, options);
+          target.input.setAttribute(property, value);
+        }
+
+        return true;
+      }
     });
-
-    if (sliders.length !== elements.length) {
-      console.warn("Slider class make only input[type='range'] into sliders!, Make sure all the provided elements are range input");
-    }
-
-    return sliders;
   };
 
   return Slider;
-}(); // const sliderInput = document.querySelector(
-//   "input[type='range']"
-// ) as HTMLInputElement;
-// let slider = new Slider(sliderInput);
+}(); // Create sliders using the provided selector
+// export init function so it will be used by webpack as global constructor of the slider
 
 
-var sliders = Slider.init("input[type='range']", {
-  orientation: 'vertical',
-  precision: 2
-});
- // ! Create multiple range slider have problem with [z-index, tooltip side]
-// ! Add the functionality that transfer value information to the hidden range input
+function init(selector, options) {
+  if (options === void 0) {
+    options = {};
+  }
+
+  var elements = Array.from(document.querySelectorAll(selector));
+  var sliders = elements.filter(function (element) {
+    return element.tagName === 'INPUT' && element.getAttribute('type') === 'range';
+  }).map(function (input) {
+    return new Slider(input, options);
+  });
+
+  if (sliders.length !== elements.length) {
+    console.warn("Slider class make only input[type='range'] into sliders!, Make sure all the provided elements are range input");
+  }
+
+  return sliders.length === 1 ? sliders[0] : sliders;
+}
+/*
+todo: Fix tooltip make in the end of the body, and make it update when you move slider thumb
+    todo: This will fix overlap problem
+todo: Finish example folder
+todo: Fix webpack config file so that give this structure:
+    src
+    build
+    example
+    dist
+todo: Make readme file to show the user how to use this frame work
+todo: fix global variable webpack problem
+todo: fix multiple initialization on the same input make multiple slider for it
+*/
 
 /***/ }),
 
@@ -3040,14 +3096,19 @@ var __webpack_exports__ = {};
   !*** ./index.ts ***!
   \******************/
 __webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "init": () => (/* reexport safe */ _src_ts_SliderJs__WEBPACK_IMPORTED_MODULE_1__.init)
+/* harmony export */ });
 /* harmony import */ var _src_scss_SliderJs_scss__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./src/scss/SliderJs.scss */ "./src/scss/SliderJs.scss");
-/* harmony import */ var _src_ts_SliderJs_ts__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/ts/SliderJs.ts */ "./src/ts/SliderJs.ts");
+/* harmony import */ var _src_ts_SliderJs__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./src/ts/SliderJs */ "./src/ts/SliderJs.ts");
 // Styles
  // Scripts
 
 
 })();
 
+/******/ 	return __webpack_exports__;
 /******/ })()
 ;
+});
 //# sourceMappingURL=SliderJs.bundle.js.map

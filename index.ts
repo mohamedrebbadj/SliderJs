@@ -1,4 +1,4 @@
 // Styles
 import "./src/scss/SliderJs.scss";
 // Scripts
-import "./src/ts/SliderJs.ts";
+export {init} from "./src/ts/SliderJs";

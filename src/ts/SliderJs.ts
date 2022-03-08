@@ -1,4 +1,3 @@
-export {};
 type SN = string | number;
 type SNU = SN | undefined;
 type Obj = { [index: string]: any };
@@ -315,28 +314,36 @@ class Slider {
       }
     });
   }
-  // Create sliders using the provided selector
-  static init(selector: string, options: Obj = {}) {
-    const elements = Array.from(document.querySelectorAll(selector));
-    const sliders = elements
-      .filter((element) => {
-        return (
-          element.tagName === 'INPUT' &&
-          element.getAttribute('type') === 'range'
-        );
-      })
-      .map((input) => {
-        return new Slider(input as HTMLInputElement, options);
-      });
-    if (sliders.length !== elements.length) {
-      console.warn(
-        "Slider class make only input[type='range'] into sliders!, Make sure all the provided elements are range input"
-      );
-    }
-    return sliders;
-  }
 }
-const sliderInput = document.querySelector(
-  "input[type='range']"
-) as HTMLInputElement;
-let slider = new Slider(sliderInput);
+// Create sliders using the provided selector
+// export init function so it will be used by webpack as global constructor of the slider
+export function init(selector: string, options: Obj = {}) {
+  const elements = Array.from(document.querySelectorAll(selector));
+  const sliders = elements
+    .filter((element) => {
+      return (
+        element.tagName === 'INPUT' && element.getAttribute('type') === 'range'
+      );
+    })
+    .map((input) => {
+      return new Slider(input as HTMLInputElement, options);
+    });
+  if (sliders.length !== elements.length) {
+    console.warn(
+      "Slider class make only input[type='range'] into sliders!, Make sure all the provided elements are range input"
+    );
+  }
+  return sliders.length === 1 ? sliders[0] : sliders;
+}
+/* 
+todo: Fix tooltip make in the end of the body, and make it update when you move slider thumb
+    todo: This will fix overlap problem
+todo: Finish example folder
+todo: Fix webpack config file so that give this structure:
+    src
+    build
+    example
+    dist
+todo: Make readme file to show the user how to use this frame work
+todo: fix multiple initialization on the same input make multiple slider for it
+*/

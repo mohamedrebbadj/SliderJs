@@ -3,19 +3,19 @@
   \***********************************************************************************************************************************************************/
 .sj {
   -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
-  /* display: -webkit-inline-box; */
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  display: -webkit-inline-box;
   display: -ms-inline-flexbox;
-  /* display: inline-flex; */
-  /* -webkit-box-orient: horizontal; */
-  /* -webkit-box-direction: normal; */
-  -ms-flex-direction: row;
-  /* flex-direction: row; */
-  /* -webkit-box-align: center; */
-  -ms-flex-align: center;
-  /* align-items: center; */
+  display: inline-flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
 }
 .sj:focus {
   outline: none;
@@ -98,17 +98,13 @@
   width: 15px;
   background-color: inherit;
   position: absolute;
-  -webkit-transform: rotate(45deg);
-          transform: rotate(45deg);
 }
 .sj-vertical {
-  z-index: 1;
   padding: 15px 10px;
-  /* -webkit-box-orient: vertical; */
-  /* -webkit-box-direction: normal; */
-  -ms-flex-direction: column;
-  /* flex-direction: column; */
-  position: relative;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
 }
 .sj-vertical .sj-track {
   margin-top: 20px;
@@ -162,8 +158,9 @@
   left: 27.5px;
 }
 .sj-tooltip-right::before {
-  top: auto;
-  left: -7.5px;
+  left: 0;
+  -webkit-transform: translateX(-7.5px) rotate(45deg);
+          transform: translateX(-7.5px) rotate(45deg);
 }
 .sj-tooltip-left {
   top: 100%;
@@ -172,8 +169,9 @@
   left: -112.5px;
 }
 .sj-tooltip-left::before {
-  top: auto;
-  left: 82.5px;
+  left: 0;
+  -webkit-transform: translateX(82.5px) rotate(45deg);
+          transform: translateX(82.5px) rotate(45deg);
 }
 .sj-tooltip-top {
   left: 100%;
@@ -182,8 +180,9 @@
   top: -52.5px;
 }
 .sj-tooltip-top::before {
-  left: auto;
-  top: 22.5px;
+  top: 0;
+  -webkit-transform: translateY(22.5px) rotate(45deg);
+          transform: translateY(22.5px) rotate(45deg);
 }
 .sj-tooltip-bottom {
   left: 100%;
@@ -192,8 +191,9 @@
   top: 27.5px;
 }
 .sj-tooltip-bottom::before {
-  left: auto;
-  top: -7.5px;
+  top: 0;
+  -webkit-transform: translateY(-7.5px) rotate(45deg);
+          transform: translateY(-7.5px) rotate(45deg);
 }
 .sj-min, .sj-max {
   color: #757575;

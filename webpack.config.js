@@ -14,7 +14,11 @@ const config = {
   entry: "./index.ts",
   output: {
     filename: "js/SliderJs.bundle.js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "dist"),
+    library: {
+      type: "umd",
+      name: "SJ"
+    }
     // assetModuleFilename: "images/[name][ext]"
   },
   devtool: "source-map",
