@@ -321,19 +321,26 @@ export function init(selector: string, options: Obj = {}) {
   const elements = Array.from(document.querySelectorAll(selector));
   const sliders = elements
     .filter((element) => {
-      return (
-        element.tagName === 'INPUT' && element.getAttribute('type') === 'range'
-      );
+      // Check if the provided element is a range input
+      const isRange =
+        element.tagName === 'INPUT' && element.getAttribute('type') === 'range';
+      // Check if Slider was initialized on this element
+      // We use optional access so the user can user the universal selector without errors
+      const isSJ = element.parentElement?.querySelector('.sj');
+      if (!isRange) {
+        console.warn('');
+      }
+      if (isSJ) {
+        throw new Error(
+          'Slider cannot be initialized more than one time per range input!!'
+        );
+      }
+      return isRange;
     })
     .map((input) => {
       return new Slider(input as HTMLInputElement, options);
     });
-  if (sliders.length !== elements.length) {
-    console.warn(
-      "Slider class make only input[type='range'] into sliders!, Make sure all the provided elements are range input"
-    );
-  }
-  return sliders.length === 1 ? sliders[0] : sliders;
+  return !sliders.length ? null : sliders.length === 1 ? sliders[0] : sliders;
 }
 /* 
 todo: Fix tooltip make in the end of the body, and make it update when you move slider thumb
@@ -345,5 +352,4 @@ todo: Fix webpack config file so that give this structure:
     example
     dist
 todo: Make readme file to show the user how to use this frame work
-todo: fix multiple initialization on the same input make multiple slider for it
 */
