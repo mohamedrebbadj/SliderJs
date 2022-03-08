@@ -345,11 +345,5 @@ export function init(selector: string, options: Obj = {}) {
 /* 
 todo: Fix tooltip make in the end of the body, and make it update when you move slider thumb
     todo: This will fix overlap problem
-todo: Finish example folder
-todo: Fix webpack config file so that give this structure:
-    src
-    build
-    example
-    dist
 todo: Make readme file to show the user how to use this frame work
 */
