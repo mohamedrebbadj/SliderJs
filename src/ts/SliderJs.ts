@@ -345,5 +345,4 @@ export function init(selector: string, options: Obj = {}) {
 /* 
 todo: Fix tooltip make in the end of the body, and make it update when you move slider thumb
     todo: This will fix overlap problem
-todo: Make readme file to show the user how to use this frame work
 */

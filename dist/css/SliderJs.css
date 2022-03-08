@@ -1,0 +1,201 @@
+/*!***********************************************************************************************************************************************************!*\
+  !*** css ./node_modules/css-loader/dist/cjs.js!./node_modules/postcss-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/scss/SliderJs.scss ***!
+  \***********************************************************************************************************************************************************/
+.sj {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.sj:focus {
+  outline: none;
+  border: 2px dashed #343434;
+}
+.sj:focus-thumb {
+  height: 28px;
+  width: 28px;
+}
+.sj:focus-thumb::after {
+  height: 16.8px;
+  width: 16.8px;
+}
+.sj-container {
+  display: inline-block;
+}
+.sj-track {
+  display: inline-block;
+  position: relative;
+  border-radius: 5px;
+  background-color: #e4e4e4;
+}
+.sj-progress {
+  position: absolute;
+  background-color: #f72585;
+  border-radius: 5px;
+}
+.sj-thumb {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 20px;
+  width: 20px;
+  border-radius: 50%;
+  background-color: #f72585;
+  position: absolute;
+}
+.sj-thumb::after {
+  content: "";
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
+  background-color: #fff;
+}
+.sj-tooltip {
+  background-color: #3a0ca3;
+  color: #ffffff;
+  position: absolute;
+  min-height: 30px;
+  min-width: 90px;
+  display: -webkit-inline-box;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  z-index: 99;
+}
+.sj-tooltip::before {
+  content: "";
+  z-index: -1;
+  height: 15px;
+  width: 15px;
+  background-color: inherit;
+  position: absolute;
+}
+.sj-vertical {
+  padding: 15px 10px;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.sj-vertical .sj-track {
+  margin-top: 20px;
+  margin-bottom: 20px;
+  height: 300px;
+  width: 5px;
+}
+.sj-vertical .sj-progress {
+  top: 0;
+  left: 50%;
+  width: 5px;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  height: 0;
+}
+.sj-vertical .sj-thumb {
+  bottom: 0;
+  left: 50%;
+  -webkit-transform: translate(-50%, 50%);
+          transform: translate(-50%, 50%);
+  top: auto;
+  right: auto;
+}
+.sj-horizontal {
+  padding: 10px 15px;
+}
+.sj-horizontal .sj-track {
+  margin-left: 20px;
+  margin-right: 20px;
+  height: 5px;
+  width: 300px;
+}
+.sj-horizontal .sj-progress {
+  top: 50%;
+  left: 0;
+  width: 0;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  height: 5px;
+}
+.sj-horizontal .sj-thumb {
+  right: 0;
+  top: 50%;
+  -webkit-transform: translate(50%, -50%);
+          transform: translate(50%, -50%);
+}
+.sj-tooltip-right {
+  top: 100%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  left: 27.5px;
+}
+.sj-tooltip-right::before {
+  left: 0;
+  -webkit-transform: translateX(-7.5px) rotate(45deg);
+          transform: translateX(-7.5px) rotate(45deg);
+}
+.sj-tooltip-left {
+  top: 100%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  left: -112.5px;
+}
+.sj-tooltip-left::before {
+  left: 0;
+  -webkit-transform: translateX(82.5px) rotate(45deg);
+          transform: translateX(82.5px) rotate(45deg);
+}
+.sj-tooltip-top {
+  left: 100%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  top: -52.5px;
+}
+.sj-tooltip-top::before {
+  top: 0;
+  -webkit-transform: translateY(22.5px) rotate(45deg);
+          transform: translateY(22.5px) rotate(45deg);
+}
+.sj-tooltip-bottom {
+  left: 100%;
+  -webkit-transform: translateX(-50%);
+          transform: translateX(-50%);
+  top: 27.5px;
+}
+.sj-tooltip-bottom::before {
+  top: 0;
+  -webkit-transform: translateY(-7.5px) rotate(45deg);
+          transform: translateY(-7.5px) rotate(45deg);
+}
+.sj-min, .sj-max {
+  color: #757575;
+  font-size: 1rem;
+}
