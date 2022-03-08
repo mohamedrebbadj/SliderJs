@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>SJ Range Slider &#10084;</title>
+    <link rel="stylesheet" href="../dist/css/SliderJs.css" />
+    <link rel="stylesheet" href="./css/index.css" />
+  </head>
+  <body>
+    <h1 class="title-1">
+      SliderJs Framework Made with <i class="heart">&#10084;</i> by
+      <a href="https://github.com/mohamedrebbadj">mohamed rebbadj</a>
+    </h1>
+    <p class="lead">
+      SliderJs is a lightweight independent framework that allow you use custom
+      range input with a lot of handy options. SliderJs is compatible with most
+      of modern browser thanks to
+      <a href="https://babeljs.io/">BableJs &#10084;</a>. SliderJs pass its
+      value to the hidden input immediatly so when you submit your form all
+      input information will be correct.
+    </p>
+    <h2 class="title-2">Default horizontal range:</h2>
+    <input type="range" name="default" />
+    <h2 class="title-2">Range with custom min, max and step:</h2>
+    <input type="range" name="min_max_step" min="400" max="1000" step="10" />
+    <h2 class="title-2">Range with custom precision:</h2>
+    <input
+      type="range"
+      name="precision"
+      min="400"
+      max="1000"
+      step="10"
+      precision="2"
+    />
+    <h2 class="title-2">Negative and positive range:</h2>
+    <input type="range" name="negative" min="-1000" max="1000" />
+    <h2 class="title-2">Vertical range:</h2>
+    <input
+      type="range"
+      name="vertical"
+      min="400"
+      max="1000"
+      step="10"
+      orientation="vertical"
+    />
+    <script src="../dist/js/SliderJs.bundle.js"></script>
+    <script src="./js/index.js"></script>
+  </body>
+</html>

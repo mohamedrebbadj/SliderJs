@@ -27,9 +27,9 @@ const config = {
     host: "localhost",
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      template: "index.html",
-    }),
+    // new HtmlWebpackPlugin({
+    //   template: "index.html",
+    // }),
 
     new MiniCssExtractPlugin({
       filename: "css/SliderJs.css"
