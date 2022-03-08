@@ -1,7 +1,7 @@
 // Generated using webpack-cli https://github.com/webpack/webpack-cli
 
 const path = require("path");
-// const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require("terser-webpack-plugin");
@@ -30,18 +30,18 @@ module.exports = () => {
       host: "localhost",
     },
     plugins: [
-      // new HtmlWebpackPlugin({
-      //   template: "index.html",
-      // }),
-  
+      new HtmlWebpackPlugin({
+        template: "index.html",
+      }),
+
       new MiniCssExtractPlugin({
         filename: isProduction ? "css/SliderJs.min.css" : "css/SliderJs.css"
       }),
-  
+
     ],
     module: {
       rules: [
-  
+
         {
           test: /\.css$/i,
           exclude: /node_modules/,
