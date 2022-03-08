@@ -1,7 +1,7 @@
 {
-  "name": "my-webpack-project",
+  "name": "SliderJs",
   "version": "1.0.0",
-  "description": "My webpack project",
+  "description": "SliderJs is a custom input range slider using typescript",
   "main": "index.js",
   "homepage": "https://mohamedrebbadj.github.io",
   "scripts": {
