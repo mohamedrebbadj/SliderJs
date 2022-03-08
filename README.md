@@ -1,10 +1,7 @@
 ## SliderJs:
----
 ![SliderJs Images](/src/images/Slider_States.png)
 
----
 ## Usage:
----
 SliderJs is a lightweight independent framework that allow you use custom range input with a lot of handy options that make it more flexible and suitable for your needs, all you have to do is to download '*dist*' folder, and include SliderJs in your page through a '*script*' tag:
 
 	 <script src="./dist/SliderJs.bundle.js"><script>
@@ -27,9 +24,9 @@ You can also customize your slider through html attributes on your base range in
     <input type="rang" orientation="horizontal" min="150" max="250" step="25" precision="0" value="175">
 **Notice**: SliderJs work only with `<input type='range'>`
 ## Examples:
----
 You can use and explore a working example of this plugin [Here](https://mohamedrebbadj.github.io/SliderJs/)
 
+## Final Words:
 *if you have any problem using this plugin open an issue or pull request if have an idea on how to fix it*
 *if you have any idea on how to improve this plugin please pull request*
 
