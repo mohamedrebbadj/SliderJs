@@ -68,7 +68,7 @@ module.exports = () => {
     },
     optimization: {
       minimizer: isProduction ? [
-        new CssMinimizerPlugin(), new TerserPlugin()
+        new CssMinimizerPlugin(), new TerserPlugin({extractComments: true})
       ] : []
     },
     resolve: {
