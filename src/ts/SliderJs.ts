@@ -219,6 +219,7 @@ class Slider {
   initActions() {
     // Add key control to slider
     this.sliderElement.addEventListener('keydown', (event: any) => {
+      event.preventDefault();
       if (this.orientation === 'vertical') {
         if (event.code === 'ArrowLeft' || event.code === 'ArrowUp') this.prev();
         if (event.code === 'ArrowRight' || event.code === 'ArrowDown')
